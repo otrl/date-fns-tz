@@ -157,8 +157,8 @@ var tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g
  * |                                 | xxxxx   | -08:00, +05:30, +00:00, +12:34:56 |       |
  * | Timezone (GMT)                  | O...OOO | GMT-8, GMT+5:30, GMT+0            |       |
  * |                                 | OOOO    | GMT-08:00, GMT+05:30, GMT+00:00   | 2     |
- * | Timezone (specific non-locat.)  | z...zzz | PDT, EST, CEST                    | 6     |
- * |                                 | zzzz    | Pacific Daylight Time             | 2,6   |
+ * | Timezone (specific non-locat.)  | z...zzz | GMT-8, GMT+5:30, GMT+0            | 6     |
+ * |                                 | zzzz    | GMT-08:00, GMT+05:30, GMT+00:00   | 2,6   |
  * | Seconds timestamp               | t       | 512969520                         | 7     |
  * |                                 | tt      | ...                               | 3,7   |
  * | Milliseconds timestamp          | T       | 512969520900                      | 7     |
@@ -233,9 +233,8 @@ var tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g
  *    and `options.firstWeekContainsDate` (compare [getISOWeekYear]{@link https://date-fns.org/docs/getISOWeekYear}
  *    and [getWeekYear]{@link https://date-fns.org/docs/getWeekYear}).
  *
- * 6. Specific non-location timezones are created using the Intl browser API. The output is determined by the
- *    preferred standard of the current locale (en-US by default) which may not always give the expected result.
- *    For this reason it is recommended to supply a `locale` in the format options when formatting a time zone name.
+ * 6. Specific non-location timezones are currently unavailable in `date-fns`,
+ *    so right now these tokens fall back to GMT timezones.
  *
  * 7. These patterns are not in the Unicode Technical Standard #35:
  *    - `i`: ISO day of week
@@ -249,11 +248,9 @@ var tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g
  *
  * 8. These tokens are often confused with others. See: https://git.io/fxCyr
  *
- *
  * ### v2.0.0 breaking changes:
  *
- * - [Changes that are common for the whole
- *   library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
  *
  * - The second argument is now required for the sake of explicitness.
  *
@@ -266,35 +263,29 @@ var tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g
  *   ```
  *
  * - New format string API for `format` function
- *   which is based on [Unicode Technical Standard
- *   #35](https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table). See [this
- *   post](https://blog.date-fns.org/post/unicode-tokens-in-date-fns-v2-sreatyki91jg) for more details.
+ *   which is based on [Unicode Technical Standard #35](https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table).
+ *   See [this post](https://blog.date-fns.org/post/unicode-tokens-in-date-fns-v2-sreatyki91jg) for more details.
  *
  * - Characters are now escaped using single quote symbols (`'`) instead of square brackets.
  *
- * @param {Date|String|Number} date - the original date
+ * @param {Date|Number} date - the original date
  * @param {String} format - the string of tokens
- * @param {OptionsWithTZ} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
- * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link
- *   https://date-fns.org/docs/toDate}
+ * @param {OptionsWithTZ} [options] - an object with options.
  * @param {0|1|2|3|4|5|6} [options.weekStartsOn=0] - the index of the first day of the week (0 - Sunday)
  * @param {Number} [options.firstWeekContainsDate=1] - the day of January, which is
- * @param {Locale} [options.locale=defaultLocale] - the locale object. See
- *   [Locale]{@link https://date-fns.org/docs/Locale}
+ * @param {Locale} [options.locale=defaultLocale] - the locale object. See [Locale]{@link https://date-fns.org/docs/Locale}
  * @param {Boolean} [options.awareOfUnicodeTokens=false] - if true, allows usage of Unicode tokens causes confusion:
  *   - Some of the day of year tokens (`D`, `DD`) that are confused with the day of month tokens (`d`, `dd`).
- *   - Some of the local week-numbering year tokens (`YY`, `YYYY`) that are confused with the calendar year tokens
- *   (`yy`, `yyyy`). See: https://git.io/fxCyr
+ *   - Some of the local week-numbering year tokens (`YY`, `YYYY`) that are confused with the calendar year tokens (`yy`, `yyyy`).
+ *   See: https://git.io/fxCyr
  * @param {String} [options.timeZone=''] - used to specify the IANA time zone offset of a date String.
  * @returns {String} the formatted date string
  * @throws {TypeError} 2 arguments required
- * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  * @throws {RangeError} `options.locale` must contain `localize` property
  * @throws {RangeError} `options.locale` must contain `formatLong` property
  * @throws {RangeError} `options.weekStartsOn` must be between 0 and 6
  * @throws {RangeError} `options.firstWeekContainsDate` must be between 1 and 7
- * @throws {RangeError} `options.awareOfUnicodeTokens` must be set to `true` to use `XX` token; see:
- *   https://git.io/fxCyr
+ * @throws {RangeError} `options.awareOfUnicodeTokens` must be set to `true` to use `XX` token; see: https://git.io/fxCyr
  *
  * @example
  * // Represent 11 February 2014 in middle-endian format:
@@ -315,6 +306,12 @@ var tzFormattingTokensRegExp = /([xXOz]+)|''|'(''|[^'])+('|$)/g
  * //=> "3 o'clock"
  */
 export default function format(dirtyDate, dirtyFormatStr, dirtyOptions) {
+  if (arguments.length < 2) {
+    throw new TypeError(
+      '2 arguments required, but only ' + arguments.length + ' present'
+    )
+  }
+
   var formatStr = String(dirtyFormatStr)
   var options = dirtyOptions || {}
 

@@ -1,10 +1,14 @@
 import assert from 'power-assert'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import utcToZonedTime from '.'
 
 describe('utcToZonedTime', function() {
-  it('returns the equivalent date at the time zone for a date string and IANA tz', function() {
-    var result = utcToZonedTime('2014-06-25T10:00:00.000Z', 'America/New_York')
+  it('returns the equivalent date at the time zone for a parsed date string and IANA tz', function() {
+    var result = utcToZonedTime(
+      parseISO('2014-06-25T10:00:00.000Z'),
+      'America/New_York'
+    )
     assert.equal(format(result, "yyyy-MM-dd'T'HH:mm:ss"), '2014-06-25T06:00:00')
   })
 
@@ -17,12 +21,12 @@ describe('utcToZonedTime', function() {
   })
 
   it('returns the same date/time for UTC', function() {
-    var result = utcToZonedTime('2014-06-25T10:00:00.000Z', 'UTC')
+    var result = utcToZonedTime(parseISO('2014-06-25T10:00:00.000Z'), 'UTC')
     assert.equal(format(result, "yyyy-MM-dd'T'HH:mm:ss"), '2014-06-25T10:00:00')
   })
 
   it('returns the equivalent date at the time zone for a date string and tz offset', function() {
-    var result = utcToZonedTime('2014-06-25T10:00:00.000Z', '-04:00')
+    var result = utcToZonedTime(parseISO('2014-06-25T10:00:00.000Z'), '-04:00')
     assert.equal(format(result, "yyyy-MM-dd'T'HH:mm:ss"), '2014-06-25T06:00:00')
   })
 
@@ -32,7 +36,7 @@ describe('utcToZonedTime', function() {
   })
 
   it('returns the same date/time for Z', function() {
-    var result = utcToZonedTime('2014-06-25T10:00:00.000Z', 'Z')
+    var result = utcToZonedTime(parseISO('2014-06-25T10:00:00.000Z'), 'Z')
     assert.equal(format(result, "yyyy-MM-dd'T'HH:mm:ss"), '2014-06-25T10:00:00')
   })
 })

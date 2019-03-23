@@ -89,11 +89,6 @@ describe('format', function() {
   var timestamp = date.getTime().toString()
   var secondsTimestamp = Math.floor(date.getTime() / 1000).toString()
 
-  it('accepts a string', function() {
-    var date = new Date(2014, 3, 4).toISOString()
-    assert(format(date, 'yyyy-MM-dd') === '2014-04-04')
-  })
-
   it('accepts a timestamp', function() {
     var date = new Date(2014, 3, 4).getTime()
     assert(format(date, 'yyyy-MM-dd') === '2014-04-04')
@@ -573,9 +568,6 @@ describe('format', function() {
   })
 
   describe('time zone', function() {
-    it('should toDate the given date in a local timezone', function() {
-      assert(format('2015-01-01', 'yyyy-MM-dd') === '2015-01-01')
-    })
     it('ISO-8601 with Z', function() {
       var result = format(date, 'X XX XXX XXXX XXXXX')
       var expectedResult = [
@@ -788,8 +780,11 @@ describe('format', function() {
   })
 
   describe('edge cases', function() {
-    it("returns String('Invalid Date') if the date isn't valid", function() {
-      assert(format(new Date(NaN), 'MMMM d, yyyy') === 'Invalid Date')
+    it('throws RangeError if the time value is invalid', () => {
+      assert.throws(
+        format.bind(null, new Date(NaN), 'MMMM d, yyyy'),
+        RangeError
+      )
     })
 
     it('handles dates before 100 AD', function() {
@@ -869,16 +864,10 @@ describe('format', function() {
     assert.throws(block, RangeError)
   })
 
-  it('throws `RangeError` if `options.additionalDigits` is not convertable to 0, 1, 2 or undefined', function() {
-    // $ExpectedMistake
-    var block = format.bind(null, date, 'yyyy-MM-dd', { additionalDigits: NaN })
-    assert.throws(block, RangeError)
+  it('throws TypeError exception if passed less than 2 arguments', function() {
+    assert.throws(format.bind(null), TypeError)
+    assert.throws(format.bind(null, 1), TypeError)
   })
-
-  // it('throws TypeError exception if passed less than 2 arguments', function() {
-  //   assert.throws(format.bind(null), TypeError)
-  //   assert.throws(format.bind(null, 1), TypeError)
-  // })
 
   describe('awareOfUnicodeTokens option', () => {
     it('throws an error if D token is used', () => {

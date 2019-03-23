@@ -1,6 +1,6 @@
 import tzParseTimezone from '../_lib/tzParseTimezone'
 import subMilliseconds from 'date-fns/subMilliseconds'
-import toDate from '../toDate'
+import toDate from 'date-fns/toDate'
 
 /**
  * @name utcToZonedTime
@@ -13,21 +13,24 @@ import toDate from '../toDate'
  * is formatted it will show the equivalent hours in the target time zone regardless
  * of the current system time zone.
  *
- * @param {Date|String|Number} date - the date with the relevant UTC time
+ * @param {Date|Number} date - the date or timestamp with the relevant UTC time
  * @param {String} timeZone - the time zone to get local time for, can be an offset or IANA time zone
- * @param {OptionsWithTZ} [options] - the object with options. See [Options]{@link https://date-fns.org/docs/Options}
- * @param {0|1|2} [options.additionalDigits=2] - passed to `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
  * @returns {Date} the new date with the equivalent time in the time zone
  * @throws {TypeError} 2 arguments required
- * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
  * @example
  * // In June 10am UTC is 6am in New York (-04:00)
  * const result = utcToZonedTime('2014-06-25T10:00:00.000Z', 'America/New_York')
  * //=> Jun 25 2014 06:00:00
  */
-export default function utcToZonedTime(dirtyDate, timeZone, options) {
-  var date = toDate(dirtyDate, options)
+export default function utcToZonedTime(dirtyDate, timeZone) {
+  if (arguments.length < 1) {
+    throw new TypeError(
+      '2 arguments required, but only ' + arguments.length + ' present'
+    )
+  }
+
+  var date = toDate(dirtyDate)
 
   // This date has the UTC time values of the input date at the system time zone
   var utcDate = new Date(
