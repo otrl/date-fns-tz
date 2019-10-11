@@ -9,11 +9,11 @@ actual time zone data out of code bundles. Modern browsers all support the
 and for those that don't a [polyfill](https://github.com/yahoo/date-time-format-timezone) can be used.
 
 If you do not wish to use a polyfill the time zone option can still be used, but only with
-time zone offsets such as '-0200' or '+04:00' and not IANA time zone names.
+time zone offsets such as `'-0200'` or `'+04:00'` and not IANA time zone names.
 
 *This work was initially proposed in PR [date-fns/#707](https://github.com/date-fns/date-fns/pull/707), but won't
 be considered until `date-fns` version 2 has been released. It is my hope that these features will eventually 
-make it into `date-fns` or at least contribute to the conversation and that this project will be deprecated.* 
+make it into `date-fns` or at least contribute to the conversation.* 
 
 ## Table of Contents
 
