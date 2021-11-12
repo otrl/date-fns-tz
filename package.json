@@ -9,8 +9,8 @@
   "engine": {
     "node": ">= 0.11"
   },
-  "main": "index.js",
-  "module": "esm/index.js",
+  "main": "tmp/package/index.js",
+  "module": "tmp/package/esm/index.js",
   "types": "typings.d.ts",
   "scripts": {
     "build": "./scripts/build/build.sh",
