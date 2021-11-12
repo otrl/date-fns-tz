@@ -52,6 +52,7 @@ export default function tzParseTimezone(timezoneString, date, isUtcDate) {
 
   // IANA time zone
   if (isValidTimezoneIANAString(timezoneString)) {
+    console.log('isValidTimezoneIANAString(timezoneString)', timezoneString)
     date = new Date(date || Date.now())
     var utcDate = isUtcDate ? date : toUtcDate(date)
 
